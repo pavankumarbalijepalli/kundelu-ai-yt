@@ -19,10 +19,11 @@ log("LLM initialized.")
 llm = llm.with_structured_output(LearningVideoSection)
 log("LLM wrapped with structured output.")
 
-topics = pickle.load(open('data/content_ideas.pkl', 'rb'))
+file_path = os.path.join(os.path.dirname(__file__), 'data/content_ideas.pkl')
+topics = pickle.load(open(file_path, 'rb'))
 topic = topics['Unfinished'].pop(0)
 topics['finished'].append(topic)
-pickle.dump(topics, open('data/content_ideas.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(topics, open(file_path, 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 log("Content ideas updated.")
 
 log(f"Processing topic: {topic}")
