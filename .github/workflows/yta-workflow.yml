@@ -1,0 +1,53 @@
+name: YTA-Agent Automation
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 15 * * *"
+
+jobs:
+  run-kuwt-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ✅ Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: main
+        
+    - name: ✅ Get current date
+      id: date
+      run: echo "today=$(date +'%d-%m-%Y')" >> $GITHUB_OUTPUT
+
+    - name: ✅ Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11.0'
+
+    - name: ✅ Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: ✅ Run YTA-Agent
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        EMAIL_PASSWORD:  ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM:   ${{ secrets.EMAIL_FROM }}
+        EMAIL_TO:  ${{ secrets.EMAIL_TO }}
+      run: |
+        echo "🚀 Running YTA-Agent..."
+        python src/main.py
+        echo "✅ Content generation finished. Email Sent!"
+    - name: ✅ Commit and Push Generated Posts
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "actions@github.com"
+        git status
+        git add . || echo "No new files to add"
+        git diff --cached --quiet || git commit -m "📚 Auto-generated content for ${{ steps.date.outputs.today }}"
+        git diff --cached --quiet || git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
