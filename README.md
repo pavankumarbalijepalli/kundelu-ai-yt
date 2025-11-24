@@ -382,15 +382,3 @@
 * LLM architecture design
 * Coding interview prep
 * Debugging ML models
-
----
-
-## Want this turned into:
-
-✅ A content calendar?
-✅ Episode-level scripts?
-✅ Playlists structure?
-✅ Pydantic format for your channel planning?
-✅ A long-term YouTube execution workflow?
-
-Tell me what you want next!
