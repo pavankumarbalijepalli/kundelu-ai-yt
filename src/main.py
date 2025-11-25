@@ -1,33 +1,34 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from models import LearningVideoSection
 from email_handler import send_email
+from datetime import timedelta as td
+from datetime import datetime as dt
+from utils import log, content_map
 from prompts import prompt
-from utils import log
 import markdown
-import pickle
 import json
 import os
 
 os.chdir('..')
 
 from dotenv import load_dotenv
-load_dotenv('.env')
-log("Environment variables loaded.")
+status = load_dotenv('.env')
+if status:
+    log("Environment variables loaded.")
+else:
+    log("Failed to load environment variables.")
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
 log("LLM initialized.")
 llm = llm.with_structured_output(LearningVideoSection)
 log("LLM wrapped with structured output.")
 
-topics = json.load(open('data/content_ideas.json', 'rb'))
-topic = topics['Unfinished'].pop(0)
-topics['finished'].append(topic)
-json.dump(topics, open('data/content_ideas.json', 'w'), indent=4)
-log("Content ideas updated.")
+today_topic = content_map.get(dt.now().strftime('%Y-%m-%d'), None)
+yesterday_topic = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'), None)
+tomorrow_topic = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
+log(f"Processing topic: {today_topic}")
 
-log(f"Processing topic: {topic}")
-
-response = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": topic}])
+response = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topic}\nprevious_video_topics: {yesterday_topic}\nnext_video_topics: {tomorrow_topic}"}])
 log("LLM response received.")
 
 content = ""
@@ -37,4 +38,4 @@ for key, value in _json.items():
         content += f"## {key.replace('_', ' ').title()}\n\n{value}\n\n"
     else:
         content += f"**{key.replace('_', ' ').title()}:** {value}\n\n"
-send_email(markdown.markdown(content), topic.split('>')[-1].strip())
+send_email(markdown.markdown(content), today_topic.split('>')[-1].strip())

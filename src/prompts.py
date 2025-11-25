@@ -2,6 +2,11 @@ prompt = """
 Generate a single JSON object that strictly matches the provided Pydantic model (LearningVideoSection). 
 All text must be written in casual Telugu using English (Roman) script (e.g., “aithe”, “chuddam”, “inka”, “mari”).
 
+INPUT:
+main_topic: TOPIC THAT NEEDS TO BE COVERED
+previous_video_topics: LIST OF PREVIOUS VIDEO TOPICS COVERED FOR CONTEXT ON WHERE TO START FROM
+next_video_topics: LIST OF NEXT VIDEO TOPICS TO TEASE FOR CONTEXT ON WHERE TO END
+
 CONTENT RULES:
 - Maintain continuity between sections: 
   • The hook must introduce a real-world mini-scenario or relatable question.
