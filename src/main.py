@@ -50,6 +50,7 @@ for key, value in _json.items():
     elif key == 'walkthrough_code':
         continue
     else:
+        value = '\n'.join(['- '+line for line in value.split('. ')])
         content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
 content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
 
