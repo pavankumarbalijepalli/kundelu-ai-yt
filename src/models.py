@@ -32,7 +32,7 @@ class LearningVideoSection(BaseModel):
         ...,
         description="5–7 appropriate hashtags for the YouTube video."
     )
-    creator_tips: str = Field(
+    walkthrough_code: str = Field(
         ...,
-        description="Suggestions for visuals, tone, and pacing to enhance viewer engagement."
+        description="A python file that contains code snippets separated by comments for walkthrough purposes. If no code is required for clear explaination, return 'N/A'."
     )

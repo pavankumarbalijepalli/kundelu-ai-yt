@@ -23,19 +23,34 @@ log("LLM initialized.")
 llm = llm.with_structured_output(LearningVideoSection)
 log("LLM wrapped with structured output.")
 
-today_topic = content_map.get(dt.now().strftime('%Y-%m-%d'), None)
-yesterday_topic = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'), None)
-tomorrow_topic = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
-log(f"Processing topic: {today_topic}")
+today_topics = content_map.get(dt.now().strftime('%Y-%m-%d'), None)
+yesterday_topics = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'), None)
+tomorrow_topics = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
+log(f"Processing topic: {today_topics}")
 
-response = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topic}\nprevious_video_topics: {yesterday_topic}\nnext_video_topics: {tomorrow_topic}"}])
+topic_1 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[0]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
+topic_2 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 log("LLM response received.")
 
 content = ""
-_json = json.loads(response.model_dump_json())
+_json = json.loads(topic_1.model_dump_json())
 for key, value in _json.items():
-    if key not in ['seo_tags', 'hashtags', 'creator_tips']:
-        content += f"## {key.replace('_', ' ').title()}\n\n{value}\n\n"
-    else:
+    if key in ['seo_tags', 'hashtags']:
         content += f"**{key.replace('_', ' ').title()}:** {value}\n\n"
-send_email(markdown.markdown(content), today_topic.split('>')[-1].strip())
+    elif key == 'walkthrough_code':
+        continue
+    else:
+        content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
+content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
+
+_json = json.loads(topic_2.model_dump_json())
+for key, value in _json.items():
+    if key in ['seo_tags', 'hashtags']:
+        content += f"**{key.replace('_', ' ').title()}:** {value}\n\n"
+    elif key == 'walkthrough_code':
+        continue
+    else:
+        content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
+content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
+
+send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
