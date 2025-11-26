@@ -50,8 +50,8 @@ for key, value in _json.items():
     elif key == 'walkthrough_code':
         continue
     else:
-        value = '\n'.join(['- '+line for line in value.split('. ')])
+        # value = '\n'.join(['- '+line for line in value.split('. ')])
         content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
 content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
-
+# print(content)
 send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))

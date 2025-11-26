@@ -34,5 +34,5 @@ class LearningVideoSection(BaseModel):
     )
     walkthrough_code: str = Field(
         ...,
-        description="A python file that contains code snippets separated by comments for walkthrough purposes. If no code is required for clear explaination, return 'N/A'."
+        description="A python file that contains code snippets separated by comments for walkthrough purposes. Mandatory!"
     )
