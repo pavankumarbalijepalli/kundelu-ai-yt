@@ -32,7 +32,7 @@ topic_1 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "c
 topic_2 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 log("LLM response received.")
 
-content = ""
+content = "## CONTENT\n\n"
 _json = json.loads(topic_1.model_dump_json())
 for key, value in _json.items():
     if key in ['seo_tags', 'hashtags']:
@@ -40,9 +40,10 @@ for key, value in _json.items():
     elif key == 'walkthrough_code':
         continue
     else:
-        content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
+        content += f"- {value}\n\n"
 content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
 
+content += "\n\n## CONTENT\n\n"
 _json = json.loads(topic_2.model_dump_json())
 for key, value in _json.items():
     if key in ['seo_tags', 'hashtags']:
@@ -51,7 +52,7 @@ for key, value in _json.items():
         continue
     else:
         # value = '\n'.join(['- '+line for line in value.split('. ')])
-        content += f"## {key.replace('_', ' ').upper()}\n\n{value}\n\n"
+        content += f"- {value}\n\n"
 content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
-# print(content)
-send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
+open('output.md', 'w').write(content)
+# send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
