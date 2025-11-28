@@ -89,7 +89,7 @@ Focus: theory, system design, and interview readiness.
 
 ---
 
-## Repo layout (suggested)
+## Agentic Orchestration - Next Steps
 ```
 yt-manim-agentic-app/
 │
