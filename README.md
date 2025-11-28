@@ -90,12 +90,44 @@ Focus: theory, system design, and interview readiness.
 ---
 
 ## Repo layout (suggested)
-- /notebooks — exploration & tutorials
-- /projects — end-to-end project templates
-- /src — reusable training/eval utilities
-- /data — sample datasets or dataset pointers
-- /docs — additional guides, reading lists, checklists
-
+```
+yt-manim-agentic-app/
+│
+├── src/
+│   ├── agents/
+│   │   ├── content_agent.py
+│   │   ├── scene_agent.py
+│   │   ├── manim_agent.py
+│   │   └── judge_agent.py
+│   │
+│   ├── workflows/
+│   │   └── pipeline.py          # orchestrate agents
+│   │
+│   ├── manim/
+│   │   ├── templates/           # base manim class templates
+│   │   └── generated/           # generated .py files
+│   │
+│   ├── output/
+│   │   └── videos/              # mp4 videos generated locally
+│   │
+│   ├── services/
+│   │   ├── llm.py               # wrapper for OpenAI/Groq
+│   │   └── runner.py            # executes manim
+│   │
+│   ├── prompts/
+│   │   ├── content_prompt.txt
+│   │   ├── scene_prompt.txt
+│   │   └── manim_prompt.txt
+│   │
+│   └── main.py
+│
+├── .github/
+│   └── workflows/
+│       └── manim.yaml           # GitHub Actions CI
+│
+├── requirements.txt
+└── README.md
+```
 ---
 
 ## Contributing
