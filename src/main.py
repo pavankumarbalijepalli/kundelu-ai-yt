@@ -26,7 +26,16 @@ log("LLM wrapped with structured output.")
 today_topics = content_map.get(dt.now().strftime('%Y-%m-%d'), None)
 yesterday_topics = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'), None)
 tomorrow_topics = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
-log(f"Processing topic: {today_topics}")
+log(f"Processing topic: {' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics])}")
+
+from langchain.agents import create_agent
+from langchain.agents.structured_output import ToolStrategy
+
+content_agent = create_agent(
+    model=ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0),
+    tools=[],
+    response_format=ToolStrategy(LearningVideoSection)
+)
 
 topic_1 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[0]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 topic_2 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
@@ -37,22 +46,24 @@ _json = json.loads(topic_1.model_dump_json())
 for key, value in _json.items():
     if key in ['seo_tags', 'hashtags']:
         content += f"**{key.replace('_', ' ').title()}:** {value}\n\n"
-    elif key == 'walkthrough_code':
+    elif key == 'walkthrough_code' or key == 'manim_code':
         continue
     else:
         content += f"- {value}\n\n"
-content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
+content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{_json['walkthrough_code']}\n</code></pre>\n\n"
 
 content += "\n\n## CONTENT\n\n"
 _json = json.loads(topic_2.model_dump_json())
 for key, value in _json.items():
     if key in ['seo_tags', 'hashtags']:
         content += f"**{key.replace('_', ' ').title()}:** {value}\n\n"
-    elif key == 'walkthrough_code':
+    elif key == 'walkthrough_code' or key == 'manim_code':
         continue
     else:
         # value = '\n'.join(['- '+line for line in value.split('. ')])
         content += f"- {value}\n\n"
-content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{value}\n</code></pre>\n\n"
-open('output.md', 'w').write(content)
-# send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
+content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{_json['walkthrough_code']}\n</code></pre>\n\n"
+
+# open('output.html', 'w').write(markdown.markdown(content))
+# open('output.md', 'w').write(content)
+send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
