@@ -28,15 +28,6 @@ yesterday_topics = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'),
 tomorrow_topics = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
 log(f"Processing topic: {' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics])}")
 
-from langchain.agents import create_agent
-from langchain.agents.structured_output import ToolStrategy
-
-content_agent = create_agent(
-    model=ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0),
-    tools=[],
-    response_format=ToolStrategy(LearningVideoSection)
-)
-
 topic_1 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[0]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 topic_2 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 log("LLM response received.")
