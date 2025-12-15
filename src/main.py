@@ -1,10 +1,10 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from models import LearningVideoSection
+from models import ContentWriterResponse
 from email_handler import send_email
 from datetime import timedelta as td
 from datetime import datetime as dt
 from utils import log, content_map
-from prompts import prompt
+from prompts import content_writer
 import markdown
 import json
 import os
@@ -20,7 +20,7 @@ else:
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
 log("LLM initialized.")
-llm = llm.with_structured_output(LearningVideoSection)
+llm = llm.with_structured_output(ContentWriterResponse)
 log("LLM wrapped with structured output.")
 
 today_topics = content_map.get(dt.now().strftime('%Y-%m-%d'), None)
@@ -28,8 +28,8 @@ yesterday_topics = content_map.get((dt.now() - td(days=1)).strftime('%Y-%m-%d'),
 tomorrow_topics = content_map.get((dt.now() + td(days=1)).strftime('%Y-%m-%d'), None)
 log(f"Processing topic: {' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics])}")
 
-topic_1 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[0]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
-topic_2 = llm.invoke([{"role": "system", "content": prompt}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
+topic_1 = llm.invoke([{"role": "system", "content": content_writer}, {"role": "user", "content": f"main_topic: {today_topics[0]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
+topic_2 = llm.invoke([{"role": "system", "content": content_writer}, {"role": "user", "content": f"main_topic: {today_topics[1]}\nprevious_video_topics: {yesterday_topics}\nnext_video_topics: {tomorrow_topics}"}])
 log("LLM response received.")
 
 content = "## CONTENT\n\n"
