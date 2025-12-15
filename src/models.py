@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Literal, Dict
 
-class LearningVideoSection(BaseModel):
+class ContentWriterResponse(BaseModel):
     title: str = Field(
         ..., 
         description="Video title")
