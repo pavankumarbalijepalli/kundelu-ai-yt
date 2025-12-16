@@ -9,7 +9,7 @@ next_video_topics: LIST OF NEXT VIDEO TOPICS TO TEASE FOR CONTEXT ON WHERE TO EN
 
 CONTENT RULES:
 - Maintain continuity between sections: 
-  • The hook must introduce a real-world mini-scenario or relatable question.
+  • The hook must introduce a real-world mini-scenario or relatable question. This scenario ideally is a metaphor that naturally leads to curiosity about the main_topic.
   • The intuition must directly follow from the hook’s scenario, expanding it with a simple mental model.
   • The technical_details must logically continue from the intuition and include:
        - crisp explanation
@@ -22,6 +22,7 @@ CONTENT RULES:
 
 STYLE RULES:
 - Write in friendly conversational English with short sentences, and simple words.
+- Ensure the tone is casual, engaging, and enthusiastic. Reading the script should feel natural, like a friendly chat.
 - Ensure smooth narrative flow; no abrupt topic jumps.
 - Avoid overly technical jargon without context.
 - Do not use heavy words. Keep it casual and friendly.
