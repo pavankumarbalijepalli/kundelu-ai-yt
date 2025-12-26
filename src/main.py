@@ -55,7 +55,7 @@ def generate_content(date):
             # value = '\n'.join(['- '+line for line in value.split('. ')])
             content += f"- {value}\n\n"
     content += f"<h2>Walkthrough Code:</h2> \n\n<pre><code>\n{_json['walkthrough_code']}\n</code></pre>\n\n"
-    return content
+    return content, today_topics
 
-content = generate_content(dt.now())
+content, today_topics = generate_content(dt.now())
 send_email(markdown.markdown(content), ' & '.join([today_topic.split('>')[-1].strip() for today_topic in today_topics]))
